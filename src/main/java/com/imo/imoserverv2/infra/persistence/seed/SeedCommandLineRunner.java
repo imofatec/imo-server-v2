@@ -5,27 +5,28 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile("dev")
+@Profile({ "dev", "test" })
 public class SeedCommandLineRunner implements CommandLineRunner {
-    private final DatabaseSeed databaseSeed;
+  private final DatabaseSeed databaseSeed;
 
-    public SeedCommandLineRunner(DatabaseSeed databaseSeed) {
-        this.databaseSeed = databaseSeed;
+  public SeedCommandLineRunner(DatabaseSeed databaseSeed) {
+    this.databaseSeed = databaseSeed;
+  }
+
+  @Override
+  public void run(String... args) throws Exception {
+    this.databaseSeed.seedDefaultAdminUser();
+    if (args.length == 0) {
+      return;
     }
 
-    @Override
-    public void run(String... args) throws Exception {
-        if (args.length == 0) {
-            return;
-        }
-
-        switch (args[0]) {
-            case "seed" -> {
-                this.databaseSeed.seed();
-            }
-            case "reset" -> {
-                this.databaseSeed.reset();
-            }
-        }
+    switch (args[0]) {
+      case "seed" -> {
+        this.databaseSeed.seed();
+      }
+      case "reset" -> {
+        this.databaseSeed.reset();
+      }
     }
+  }
 }
